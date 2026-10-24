@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<title>Идентификационная карта</title>
+<title>Паспорт</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Паспорт">
@@ -403,23 +403,20 @@ header h1 {
   background: var(--qr-blue);
   display: grid;
   place-items: center;
-  box-shadow: 0 4px 14px rgba(20, 98, 201, 0.3);
+  box-shadow: 0 4px 12px rgba(20, 98, 201, 0.3);
   transition: transform 0.2s ease;
   overflow: hidden;
-  position: relative;
 }
 
 .bottom-dock:active .qr-orb {
   transform: scale(0.93);
 }
 
-/* Иконка внутри синей круглой кнопки (крупная, без лишних полей) */
+/* Иконка внутри кнопки QR */
 .qr-orb-icon {
-  width: 46px;
-  height: 46px;
+  width: 52px;
+  height: 52px;
   object-fit: contain;
-  transform: scale(1.15); /* или размер, который вам удобен */
- /* mix-blend-mode: screen; /* заменяет белый фон на прозрачный */
 }
 
 .dock-text {
@@ -433,10 +430,10 @@ header h1 {
 .backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(15, 30, 50, 0.38);
+  background: rgba(15, 30, 50, 0.35);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.35s ease;
+  transition: opacity 0.32s ease;
   z-index: 25;
 }
 
@@ -451,70 +448,56 @@ header h1 {
   left: 0;
   right: 0;
   bottom: 0;
-  max-height: 88dvh;
+  max-height: 86dvh;
   background: var(--sheet-bg);
   border-radius: 28px 28px 0 0;
   box-shadow: 0 -8px 36px rgba(12, 34, 64, 0.18);
   transform: translateY(100%);
-  transition: transform 0.38s cubic-bezier(0.2, 1, 0.32, 1);
+  transition: transform 0.4s cubic-bezier(0.2, 1, 0.32, 1);
   z-index: 30;
   display: flex;
   flex-direction: column;
-  padding: 6px 16px 28px;
+  padding: 10px 16px 28px;
   touch-action: none;
 }
 
-.sheet-handle-wrap {
-  width: 100%;
-  padding: 10px 0 14px;
-  display: flex;
-  justify-content: center;
-  cursor: pointer;
+.modal-sheet.open {
+  transform: translateY(0);
 }
 
 .sheet-handle {
-  width: 38px;
-  height: 4.5px;
-  border-radius: 3px;
-  background: #cbd5e1;
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: #d0d5dd;
+  margin: 4px auto 14px;
 }
 
-/* Белая карточка с крупным QR */
+/* Карточка с QR внутри шторки */
 .qr-card-box {
   background: #ffffff;
-  border-radius: 24px;
-  padding: 16px 14px 18px;
+  border-radius: 22px;
+  padding: 22px 18px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   box-shadow: 0 4px 18px rgba(15, 45, 90, 0.05);
-  overflow: hidden;
-}
-
-.qr-code-wrap {
-  width: 100%;
-  max-width: 290px;
-  aspect-ratio: 1;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
 }
 
 .qr-code-img {
-  width: 100%;
-  height: 100%;
+  width: min(68vw, 248px);
+  aspect-ratio: 1;
   object-fit: contain;
-  transform: scale(1.34); /* Увеличение QR-кода и обрезка прозрачных полей */
   display: block;
 }
 
 /* Прогресс-бар таймера */
 .timer-bar-wrap {
-  width: 96%;
+  width: 100%;
   height: 6px;
   background: #e5edf7;
   border-radius: 3px;
-  margin-top: 14px;
+  margin-top: 18px;
   overflow: hidden;
 }
 
@@ -603,7 +586,7 @@ header h1 {
           <path d="M15 19l-7-7 7-7"/>
         </svg>
       </button>
-      <h1>Идентификационная карта</h1>
+      <h1>Паспорт</h1>
     </header>
 
     <main class="stage">
@@ -612,11 +595,73 @@ header h1 {
 
         <!-- Карточка 1: Лицевая -->
         <div class="id-card" id="card-0" style="z-index: 10; transform: translate3d(0, 0, 0) scale(1);">
+          <!-- Реалистичный векторный фон государственной ID-карты Кыргызской Республики -->
           <div class="card-art">
-            <svg viewBox="0 0 380 390" preserveAspectRatio="none">
-              <path d="M0 245 L62 186 L118 224 L175 160 L248 226 L320 174 L380 216 V390 H0 Z" fill="#ebf6ee"/>
-              <path d="M0 300 L76 256 L150 286 L230 220 L308 274 L380 236 V390 H0 Z" fill="#d9edf8" opacity="0.8"/>
-              <path d="M190 390 L274 316 L315 342 L380 292 V390 Z" fill="#eaf4fe" opacity="0.95"/>
+            <svg viewBox="0 0 380 390" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <!-- Тёплое сияние солнца -->
+                <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#fff1b8" stop-opacity="0.95"/>
+                  <stop offset="55%" stop-color="#fff8db" stop-opacity="0.6"/>
+                  <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+                </radialGradient>
+                <!-- Левый пастельный холм за фотографией -->
+                <linearGradient id="hillLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#edf9ef"/>
+                  <stop offset="65%" stop-color="#daf2de"/>
+                  <stop offset="100%" stop-color="#e8f7ec"/>
+                </linearGradient>
+                <!-- Правый склон холма -->
+                <linearGradient id="hillRight" x1="0%" y1="0%" x2="100%" y2="80%">
+                  <stop offset="0%" stop-color="#f0faf2"/>
+                  <stop offset="100%" stop-color="#d3eed8"/>
+                </linearGradient>
+              </defs>
+
+              <!-- 1. Восходящее солнце с лучами (между фото и именами) -->
+              <g opacity="0.95">
+                <!-- Лучи солнца -->
+                <path d="M172 144 L160 102 L174 106 Z" fill="#ffe785" opacity="0.65"/>
+                <path d="M172 144 L182 105 L196 114 Z" fill="#ffe785" opacity="0.65"/>
+                <path d="M172 144 L204 122 L212 136 Z" fill="#ffe785" opacity="0.6"/>
+                <path d="M172 144 L144 120 L152 110 Z" fill="#ffe785" opacity="0.55"/>
+                <circle cx="172" cy="144" r="30" fill="url(#sunGlow)"/>
+              </g>
+
+              <!-- 2. Парящий сокол (Ак-Шумкар) в небе справа -->
+              <g fill="#cfdfef" opacity="0.9" transform="translate(56, -16)">
+                <!-- Тело и голова -->
+                <path d="M175 112 C184 108 194 110 204 118 C194 121 184 121 175 118 Z"/>
+                <!-- Левое крыло -->
+                <path d="M175 115 C156 122 138 132 122 145 C132 137 145 130 160 125 C167 123 172 119 175 115 Z"/>
+                <!-- Правое вытянутое крыло -->
+                <path d="M194 114 C214 107 236 102 260 99 C248 108 233 115 216 120 C207 121 200 118 194 114 Z"/>
+                <!-- Хвост -->
+                <path d="M172 118 L158 128 L168 123 Z"/>
+              </g>
+
+              <!-- 3. Зеленый холм слева (плавно поднимается за фотографией) -->
+              <path d="M0 320 L0 150 Q38 85 80 80 Q120 120 145 175 Q170 225 195 238 L195 330 Z" 
+                    fill="url(#hillLeft)" opacity="0.92"/>
+
+              <!-- 4. Правые зеленые холмы за именами -->
+              <path d="M140 215 Q205 165 260 190 Q315 215 380 168 V350 H140 Z" fill="#f1faf3" opacity="0.8"/>
+              <path d="M155 225 Q218 175 275 212 Q325 245 380 200 V350 H155 Z" fill="url(#hillRight)" opacity="0.88"/>
+
+              <!-- 5. Голубая река/ледник (заливает нижнюю правую часть под цифрой 1) -->
+              <path d="M0 242 Q60 236 115 260 Q200 302 295 245 Q335 252 380 242 V390 H0 Z" fill="#deeffa"/>
+              <path d="M0 268 Q72 250 132 282 Q215 324 300 268 Q340 274 380 265 V390 H0 Z" fill="#cde5f7" opacity="0.75"/>
+
+              <!-- 6. Белые зубцы крыла, врезающиеся в голубой угол под датой рождения -->
+              <path d="M0 242 
+                       Q60 236 115 260 Q155 282 185 274 
+                       L212 300 L238 314
+                       L266 332 L254 336
+                       L294 356 L278 362
+                       L322 384 L306 388
+                       L350 404 L336 406
+                       L0 406 Z" 
+                    fill="#ffffff"/>
             </svg>
           </div>
 
@@ -684,7 +729,7 @@ header h1 {
                 </div>
                 <div class="field">
                   <span class="f-lbl">Туулган күнү / Дата рождения<br>/ Date of birth</span>
-                  <span class="f-val">25.12.2003</span>
+                  <span class="f-val">25.12.2006</span>
                 </div>
               </div>
             </div>
@@ -695,10 +740,73 @@ header h1 {
 
         <!-- Карточка 2: Оборотная -->
         <div class="id-card" id="card-1" style="z-index: 5; transform: translate3d(0, 14px, 0) scale(0.93);">
+          <!-- Векторный фон оборотной стороны -->
           <div class="card-art">
-            <svg viewBox="0 0 380 390" preserveAspectRatio="none">
-              <path d="M0 245 L62 186 L118 224 L175 160 L248 226 L320 174 L380 216 V390 H0 Z" fill="#ebf6ee"/>
-              <path d="M0 300 L76 256 L150 286 L230 220 L308 274 L380 236 V390 H0 Z" fill="#d9edf8" opacity="0.8"/>
+            <svg viewBox="0 0 380 390" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <!-- Тёплое сияние солнца -->
+                <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#fff1b8" stop-opacity="0.95"/>
+                  <stop offset="55%" stop-color="#fff8db" stop-opacity="0.6"/>
+                  <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+                </radialGradient>
+                <!-- Левый пастельный холм за фотографией -->
+                <linearGradient id="hillLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#edf9ef"/>
+                  <stop offset="65%" stop-color="#daf2de"/>
+                  <stop offset="100%" stop-color="#e8f7ec"/>
+                </linearGradient>
+                <!-- Правый склон холма -->
+                <linearGradient id="hillRight" x1="0%" y1="0%" x2="100%" y2="80%">
+                  <stop offset="0%" stop-color="#f0faf2"/>
+                  <stop offset="100%" stop-color="#d3eed8"/>
+                </linearGradient>
+              </defs>
+
+              <!-- 1. Восходящее солнце с лучами (между фото и именами) -->
+              <g opacity="0.95">
+                <!-- Лучи солнца -->
+                <path d="M172 144 L160 102 L174 106 Z" fill="#ffe785" opacity="0.65"/>
+                <path d="M172 144 L182 105 L196 114 Z" fill="#ffe785" opacity="0.65"/>
+                <path d="M172 144 L204 122 L212 136 Z" fill="#ffe785" opacity="0.6"/>
+                <path d="M172 144 L144 120 L152 110 Z" fill="#ffe785" opacity="0.55"/>
+                <circle cx="172" cy="144" r="30" fill="url(#sunGlow)"/>
+              </g>
+
+              <!-- 2. Парящий сокол (Ак-Шумкар) в небе справа -->
+              <g fill="#cfdfef" opacity="0.9" transform="translate(56, -16)">
+                <!-- Тело и голова -->
+                <path d="M175 112 C184 108 194 110 204 118 C194 121 184 121 175 118 Z"/>
+                <!-- Левое крыло -->
+                <path d="M175 115 C156 122 138 132 122 145 C132 137 145 130 160 125 C167 123 172 119 175 115 Z"/>
+                <!-- Правое вытянутое крыло -->
+                <path d="M194 114 C214 107 236 102 260 99 C248 108 233 115 216 120 C207 121 200 118 194 114 Z"/>
+                <!-- Хвост -->
+                <path d="M172 118 L158 128 L168 123 Z"/>
+              </g>
+
+              <!-- 3. Зеленый холм слева (плавно поднимается за фотографией) -->
+              <path d="M0 320 L0 150 Q38 85 80 80 Q120 120 145 175 Q170 225 195 238 L195 330 Z" 
+                    fill="url(#hillLeft)" opacity="0.92"/>
+
+              <!-- 4. Правые зеленые холмы за именами -->
+              <path d="M140 215 Q205 165 260 190 Q315 215 380 168 V350 H140 Z" fill="#f1faf3" opacity="0.8"/>
+              <path d="M155 225 Q218 175 275 212 Q325 245 380 200 V350 H155 Z" fill="url(#hillRight)" opacity="0.88"/>
+
+              <!-- 5. Голубая река/ледник (заливает нижнюю правую часть под цифрой 1) -->
+              <path d="M0 242 Q60 236 115 260 Q200 302 295 245 Q335 252 380 242 V390 H0 Z" fill="#deeffa"/>
+              <path d="M0 268 Q72 250 132 282 Q215 324 300 268 Q340 274 380 265 V390 H0 Z" fill="#cde5f7" opacity="0.75"/>
+
+              <!-- 6. Белые зубцы крыла, врезающиеся в голубой угол под датой рождения -->
+              <path d="M0 242 
+                       Q60 236 115 260 Q155 282 185 274 
+                       L212 300 L238 314
+                       L266 332 L254 336
+                       L294 356 L278 362
+                       L322 384 L306 388
+                       L350 404 L336 406
+                       L0 406 Z" 
+                    fill="#ffffff"/>
             </svg>
           </div>
 
@@ -783,15 +891,11 @@ header h1 {
 
   <!-- Всплывающее окно (Bottom Sheet) -->
   <div class="modal-sheet" id="modal-sheet">
-    <div class="sheet-handle-wrap" id="close-sheet-handle">
-      <div class="sheet-handle"></div>
-    </div>
+    <div class="sheet-handle"></div>
 
     <div class="qr-card-box">
-      <!-- Контейнер с крупным QR-кодом -->
-      <div class="qr-code-wrap">
-        <img src="https://i.ibb.co/jk0GbKF6/test123-Photoroom.png" alt="QR-код цифрового документа" class="qr-code-img">
-      </div>
+      <!-- Изображение QR-кода высокого разрешения -->
+      <img src="https://i.ibb.co/jk0GbKF6/test123-Photoroom.png" alt="QR-код цифрового документа" class="qr-code-img">
 
       <!-- Шкала прогресса таймера -->
       <div class="timer-bar-wrap">
@@ -827,7 +931,7 @@ header h1 {
 
 <script>
 (function(){
-/* 1. Логика свайпа стопки карточек (по горизонтали и вертикали) */
+  /* 1. Логика свайпа стопки карточек (по горизонтали и вертикали) */
   var stack = document.getElementById('stack');
   var card0 = document.getElementById('card-0');
   var card1 = document.getElementById('card-1');
@@ -868,7 +972,6 @@ header h1 {
     if (axis === 'x') {
       flyX = dir * (stackWidth + sideMargin - 12);
     } else {
-      // Смещение по вертикали (оставляет контур ~20px у верхнего/нижнего края)
       flyY = dir * (stackHeight - 20);
     }
 
@@ -921,7 +1024,6 @@ header h1 {
     var front = cards[active];
     var back = cards[1 - active];
 
-    // Карточка следует за пальцем в любом направлении (2D)
     front.style.transform = 'translate3d(' + dx + 'px, ' + dy + 'px, 0) scale(1)';
     back.style.transform = 'translate3d(0, 14px, 0) scale(0.93)';
   });
@@ -933,18 +1035,15 @@ header h1 {
 
     var absX = Math.abs(dx);
     var absY = Math.abs(dy);
-    var threshold = 40; // Порог свайпа в пикселях
+    var threshold = 40;
 
     if (absX >= threshold || absY >= threshold) {
       if (absX >= absY) {
-        // Горизонтальный свайп: влево (-1) или вправо (+1)
         performDeckSwap('x', dx > 0 ? 1 : -1);
       } else {
-        // Вертикальный свайп: вверх (-1) или вниз (+1)
         performDeckSwap('y', dy > 0 ? 1 : -1);
       }
     } else {
-      // Возврат на место при слабом сдвиге
       var front = cards[active];
       var back = cards[1 - active];
       front.style.transition = 'transform 0.3s cubic-bezier(0.18, 1.2, 0.35, 1)';
@@ -972,6 +1071,26 @@ header h1 {
     if (active !== 0) performDeckSwap('x', 1);
   });
 
+  /* 2. Логика модального окна QR-кода */
+  var app = document.getElementById('app');
+  var openBtn = document.getElementById('open-sheet-btn');
+  var modalSheet = document.getElementById('modal-sheet');
+  var backdrop = document.getElementById('backdrop');
+  var timerCountdown = document.getElementById('timer-countdown');
+  var timerBar = document.getElementById('timer-bar');
+
+  var timeLeft = 153; // 2 мин 33 сек = 153 сек
+  var totalTime = 180;
+  var timerInterval = null;
+
+  function updateTimerUI() {
+    var m = Math.floor(timeLeft / 60);
+    var s = timeLeft % 60;
+    timerCountdown.textContent = m + ' мин ' + (s < 10 ? '0' : '') + s + ' секунд';
+    var pct = Math.max(0, Math.min(100, (timeLeft / totalTime) * 100));
+    timerBar.style.width = pct + '%';
+  }
+
   function startTimer() {
     clearInterval(timerInterval);
     updateTimerUI();
@@ -987,38 +1106,27 @@ header h1 {
   }
 
   function openSheet() {
-    modalSheet.style.transition = 'transform 0.38s cubic-bezier(0.2, 1, 0.32, 1)';
-    modalSheet.style.transform = 'translateY(0)';
+    modalSheet.classList.add('open');
     backdrop.classList.add('active');
     app.classList.add('sheet-open');
     startTimer();
   }
 
   function closeSheet() {
-    modalSheet.style.transition = 'transform 0.32s cubic-bezier(0.25, 1, 0.5, 1)';
-    modalSheet.style.transform = 'translateY(100%)';
+    modalSheet.classList.remove('open');
     backdrop.classList.remove('active');
     app.classList.remove('sheet-open');
     clearInterval(timerInterval);
-    sheetTouchY = null;
-    sheetDeltaY = 0;
   }
 
   openBtn.addEventListener('click', openSheet);
   backdrop.addEventListener('click', closeSheet);
-  closeHandle.addEventListener('click', closeSheet);
 
-  window.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeSheet();
-  });
-
-  // Плавный свайп вниз для закрытия шторки
   var sheetTouchY = null, sheetDeltaY = 0;
   modalSheet.addEventListener('pointerdown', function(e) {
     sheetTouchY = e.clientY;
     sheetDeltaY = 0;
     modalSheet.style.transition = 'none';
-    try { modalSheet.setPointerCapture(e.pointerId); } catch(_) {}
   });
 
   window.addEventListener('pointermove', function(e) {
@@ -1033,10 +1141,10 @@ header h1 {
   function sheetPointerEnd() {
     if (sheetTouchY === null) return;
     sheetTouchY = null;
-    if (sheetDeltaY > 60) {
+    modalSheet.style.transition = 'transform 0.35s cubic-bezier(0.2, 1, 0.32, 1)';
+    if (sheetDeltaY > 80) {
       closeSheet();
     } else {
-      modalSheet.style.transition = 'transform 0.3s cubic-bezier(0.2, 1, 0.32, 1)';
       modalSheet.style.transform = 'translateY(0)';
     }
     sheetDeltaY = 0;
