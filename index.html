@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<title>Паспорт</title>
+<title>Идентификационная карта</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Паспорт">
@@ -25,8 +25,8 @@
   --val-color: #0b1a2d;
   --primary-blue: #145ca7;
   --teal-active: #00c1af;
-  --sheet-bg: #ffffff;
-  --qr-blue: #1872e8;
+  --sheet-bg: #f5f7fa;
+  --qr-blue: #1462c9;
   --shadow-card: 0 16px 36px -10px rgba(20, 68, 138, 0.16), 0 3px 8px rgba(0, 0, 0, 0.03);
   box-sizing: border-box;
 }
@@ -48,6 +48,12 @@ html, body {
   -webkit-tap-highlight-color: transparent;
 }
 
+img {
+  -webkit-user-drag: none;
+  user-drag: none;
+  pointer-events: none;
+}
+
 .app {
   position: relative;
   height: 100dvh;
@@ -58,6 +64,19 @@ html, body {
   background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 48%, var(--sky-bot) 100%);
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  transition: filter 0.35s ease, transform 0.35s ease;
+  min-height: 0;
+}
+
+.app.sheet-open .main-content {
+  filter: blur(5px);
+  transform: scale(0.97);
 }
 
 header {
@@ -92,6 +111,7 @@ header h1 {
   color: var(--text-dark);
 }
 
+/* Область стопки карточек */
 .stage {
   flex: 1;
   display: flex;
@@ -100,37 +120,29 @@ header h1 {
   align-items: center;
   padding-bottom: 110px;
   min-height: 0;
-}
-
-.carousel {
-  width: 100%;
+  position: relative;
   overflow: hidden;
-  touch-action: pan-y;
-  cursor: grab;
-  padding: 10px 0 4px;
 }
 
-.carousel.drag {
+.card-stack {
+  position: relative;
+  width: calc(100% - 44px);
+  max-width: 382px;
+  aspect-ratio: 376 / 384;
+  touch-action: none;
+  cursor: grab;
+  margin: 0 auto;
+}
+
+.card-stack.drag {
   cursor: grabbing;
 }
 
-.track {
-  display: flex;
-  will-change: transform;
-}
-
-.slide {
-  flex: 0 0 100%;
-  display: flex;
-  justify-content: center;
-  padding: 0 16px;
-}
-
 .id-card {
-  position: relative;
+  position: absolute;
+  inset: 0;
   width: 100%;
-  max-width: 382px;
-  aspect-ratio: 376 / 384;
+  height: 100%;
   background: var(--card-bg);
   border-radius: 26px;
   box-shadow: var(--shadow-card);
@@ -138,7 +150,8 @@ header h1 {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  will-change: transform;
+  will-change: transform, z-index;
+  transform-origin: center center;
 }
 
 .card-art {
@@ -270,7 +283,6 @@ header h1 {
   height: 40px;
   object-fit: contain;
   margin-top: -2px;
-  mix-blend-mode: multiply;
 }
 
 .col-info {
@@ -327,482 +339,703 @@ header h1 {
   line-height: 1.25;
 }
 
+/* Индикаторы страниц */
 .indicators {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 6px;
-  margin-top: 22px;
+  gap: 8px;
+  margin-top: 24px;
 }
 
 .dot {
   border: 0;
   padding: 0;
-  height: 8px;
-  width: 8px;
-  border-radius: 4px;
+  height: 9px;
+  width: 9px;
+  border-radius: 5px;
   background: var(--teal-active);
   cursor: pointer;
-  transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  opacity: 0.8;
+  transition: width 0.38s cubic-bezier(0.18, 1.25, 0.35, 1), opacity 0.3s ease;
 }
 
 .dot[aria-current="true"] {
-  width: 28px;
+  width: 32px;
+  opacity: 1;
 }
 
-.sheet {
+/* Нижняя панель с кнопкой QR */
+.bottom-dock {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
-  height: min(80dvh, 600px);
-  background: var(--sheet-bg);
-  border-radius: 34px 34px 0 0;
-  touch-action: none;
-  will-change: transform;
+  height: 84px;
+  background: #ffffff;
+  border-radius: 32px 32px 0 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding-bottom: 14px;
   z-index: 10;
-  transform: translateY(var(--y, 0px));
-  box-shadow: 0 -8px 30px rgba(18, 52, 98, 0.08);
+  cursor: pointer;
 }
 
-.notch-pedestal {
+.notch-center {
   position: absolute;
+  top: -44px;
   left: 50%;
-  top: -46px;
-  width: 92px;
-  height: 92px;
-  margin-left: -46px;
+  transform: translateX(-50%);
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
-  background: var(--sheet-bg);
+  background: #ffffff;
   display: grid;
   place-items: center;
-  cursor: pointer;
-  z-index: 2;
-  box-shadow: 0 -4px 16px rgba(18, 52, 98, 0.06);
+  box-shadow: 0 -4px 14px rgba(18, 52, 98, 0.05);
 }
 
-.orb-btn {
+.qr-orb {
   width: 72px;
   height: 72px;
   border-radius: 50%;
   background: var(--qr-blue);
   display: grid;
   place-items: center;
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.sheet.open .orb-btn {
-  transform: scale(0.86);
-}
-
-.peek-title {
+  box-shadow: 0 4px 14px rgba(20, 98, 201, 0.3);
+  transition: transform 0.2s ease;
+  overflow: hidden;
   position: relative;
-  z-index: 1;
-  padding: 56px 20px 20px;
-  text-align: center;
+}
+
+.bottom-dock:active .qr-orb {
+  transform: scale(0.93);
+}
+
+/* Иконка внутри синей круглой кнопки (крупная, без лишних полей) */
+.qr-orb-icon {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  transform: scale(1.15); /* или размер, который вам удобен */
+ /* mix-blend-mode: screen; /* заменяет белый фон на прозрачный */
+}
+
+.dock-text {
   font-size: 15px;
   font-weight: 500;
-  color: #121f2d;
+  color: #111827;
+  letter-spacing: -0.1px;
 }
 
-.sheet-body {
+/* Затемняющий оверлей */
+.backdrop {
   position: absolute;
-  inset: 120px 0 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 16px 24px;
+  inset: 0;
+  background: rgba(15, 30, 50, 0.38);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.35s ease;
+  z-index: 25;
 }
 
-.sheet.open .sheet-body {
+.backdrop.active {
   opacity: 1;
   pointer-events: auto;
 }
 
-.qr-box {
-  width: min(72vw, 290px);
-  aspect-ratio: 1;
+/* Выдвижное окно с QR-кодом (Bottom Sheet) */
+.modal-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: 88dvh;
+  background: var(--sheet-bg);
+  border-radius: 28px 28px 0 0;
+  box-shadow: 0 -8px 36px rgba(12, 34, 64, 0.18);
+  transform: translateY(100%);
+  transition: transform 0.38s cubic-bezier(0.2, 1, 0.32, 1);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  padding: 6px 16px 28px;
+  touch-action: none;
+}
+
+.sheet-handle-wrap {
+  width: 100%;
+  padding: 10px 0 14px;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.sheet-handle {
+  width: 38px;
+  height: 4.5px;
+  border-radius: 3px;
+  background: #cbd5e1;
+}
+
+/* Белая карточка с крупным QR */
+.qr-card-box {
   background: #ffffff;
   border-radius: 24px;
-  padding: 18px;
-  box-shadow: 0 16px 40px -12px rgba(16, 52, 102, 0.16);
+  padding: 16px 14px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4px 18px rgba(15, 45, 90, 0.05);
+  overflow: hidden;
+}
+
+.qr-code-wrap {
+  width: 100%;
+  max-width: 290px;
+  aspect-ratio: 1;
   display: grid;
   place-items: center;
+  overflow: hidden;
 }
 
-.qr-box svg {
+.qr-code-img {
   width: 100%;
   height: 100%;
+  object-fit: contain;
+  transform: scale(1.34); /* Увеличение QR-кода и обрезка прозрачных полей */
+  display: block;
 }
 
-.sheet-body p {
-  margin-top: 20px;
-  font-size: 16px;
-  font-weight: 500;
-  color: #556980;
+/* Прогресс-бар таймера */
+.timer-bar-wrap {
+  width: 96%;
+  height: 6px;
+  background: #e5edf7;
+  border-radius: 3px;
+  margin-top: 14px;
+  overflow: hidden;
+}
+
+.timer-bar-fill {
+  height: 100%;
+  width: 78%;
+  background: var(--qr-blue);
+  border-radius: 3px;
+  transition: width 1s linear;
+}
+
+.timer-text-wrap {
+  margin-top: 12px;
   text-align: center;
+}
+
+.timer-sub {
+  font-size: 13.5px;
+  line-height: 1.3;
+  color: var(--qr-blue);
+  font-weight: 500;
+}
+
+.timer-bold {
+  font-size: 14.5px;
+  line-height: 1.35;
+  color: var(--qr-blue);
+  font-weight: 700;
+}
+
+/* Описание документа */
+.doc-info-block {
+  margin-top: 18px;
+  padding: 0 6px;
+}
+
+.doc-info-title {
+  font-size: 19px;
+  font-weight: 700;
+  color: #101828;
+  letter-spacing: -0.2px;
+  margin-bottom: 6px;
+}
+
+.doc-info-desc {
+  font-size: 13px;
+  line-height: 1.36;
+  color: #344054;
+  font-weight: 500;
+  margin-bottom: 18px;
+}
+
+.doc-creds {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  column-gap: 12px;
+}
+
+.cred-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cred-label {
+  font-size: 12.5px;
+  color: #667085;
+  font-weight: 500;
+}
+
+.cred-value {
+  font-size: 17px;
+  font-weight: 700;
+  color: #101828;
+  letter-spacing: -0.2px;
 }
 </style>
 </head>
 <body>
 <div class="app" id="app">
-  <header>
-    <button class="btn-back" id="back" aria-label="Назад">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M15 19l-7-7 7-7"/>
-      </svg>
-    </button>
-    <h1>Паспорт</h1>
-  </header>
-
-  <main class="stage">
-    <div class="carousel" id="carousel">
-      <div class="track" id="track">
-
-        <!-- 1. Лицевая сторона -->
-        <div class="slide">
-          <div class="id-card">
-            <div class="card-art">
-              <svg viewBox="0 0 380 390" preserveAspectRatio="none">
-                <path d="M0 245 L62 186 L118 224 L175 160 L248 226 L320 174 L380 216 V390 H0 Z" fill="#ebf6ee"/>
-                <path d="M0 300 L76 256 L150 286 L230 220 L308 274 L380 236 V390 H0 Z" fill="#d9edf8" opacity="0.8"/>
-                <path d="M190 390 L274 316 L315 342 L380 292 V390 Z" fill="#eaf4fe" opacity="0.95"/>
-              </svg>
-            </div>
-
-            <div class="card-content">
-              <div class="card-header">
-                <div class="header-left">
-                  <img src="https://i.ibb.co/yFqcv858/image-removebg-preview.png" alt="Герб Кыргызской Республики" class="kg-emblem">
-                  <div class="header-title-kg">
-                    <span>КЫРГЫЗ РЕСПУБЛИКАСЫ</span>
-                    <span>КЫРГЫЗСКАЯ РЕСПУБЛИКА</span>
-                    <span>THE KYRGYZ REPUBLIC</span>
-                  </div>
-                </div>
-
-                <div class="header-right">
-                  <div class="header-title-card">
-                    <span>ИДЕНТИФИКАЦИЯЛЫК КАРТА</span>
-                    <span>ИДЕНТИФИКАЦИОННАЯ КАРТА</span>
-                    <span>IDENTITY CARD</span>
-                  </div>
-                  <svg class="chip-icon" viewBox="0 0 32 20">
-                    <rect x="1" y="1" width="30" height="18" rx="3" fill="none" stroke="#165ba7" stroke-width="2"/>
-                    <line x1="1" y1="10" x2="31" y2="10" stroke="#165ba7" stroke-width="2"/>
-                    <circle cx="16" cy="10" r="4.5" fill="#ffffff" stroke="#165ba7" stroke-width="2"/>
-                  </svg>
-                </div>
-              </div>
-
-              <div class="card-grid">
-                <div class="col-photo">
-                  <div class="photo-frame">
-                    <img src="https://i.ibb.co/1J6t3Y2y/azem-photo11.png" alt="Фото">
-                  </div>
-
-                  <div class="sig-block">
-                    <span class="sig-lbl">Колу / Подпись<br>/ Signature</span>
-                    <img src="https://i.ibb.co/FksT0HVV/azem-sig11-removebg-preview.png" alt="Подпись" class="sig-img">
-                  </div>
-                </div>
-
-                <div class="col-info">
-                  <div class="field">
-                    <span class="f-lbl">Аты / Имя / Name</span>
-                    <span class="f-val">АЗЕМ / AZEM</span>
-                  </div>
-                  <div class="field">
-                    <span class="f-lbl">Фамилиясы / Фамилия / Surname</span>
-                    <span class="f-val">ТАШМАТОВА / TASHMATOVA</span>
-                  </div>
-                  <div class="field">
-                    <span class="f-lbl">Атасынын аты / Отчество / Patronymic</span>
-                    <span class="f-val">ТУНУКБЕКОВНА</span>
-                  </div>
-                  <div class="field">
-                    <span class="f-lbl">Жынысы / Пол / Sex</span>
-                    <span class="f-val">А / F</span>
-                  </div>
-                  <div class="field">
-                    <span class="f-lbl">Жарандыгы / Гражданство / Citizenship</span>
-                    <span class="f-val">Кыргыз Республикасы</span>
-                  </div>
-                  <div class="field">
-                    <span class="f-lbl">Улуту / Национальность / Nationality</span>
-                    <span class="f-val">КЫРГЫЗ</span>
-                  </div>
-                  <div class="field">
-                    <span class="f-lbl">Туулган күнү / Дата рождения<br>/ Date of birth</span>
-                    <span class="f-val">25.12.2003</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <span class="card-num">1</span>
-          </div>
-        </div>
-
-        <!-- 2. Оборотная сторона -->
-        <div class="slide">
-          <div class="id-card">
-            <div class="card-art">
-              <svg viewBox="0 0 380 390" preserveAspectRatio="none">
-                <path d="M0 245 L62 186 L118 224 L175 160 L248 226 L320 174 L380 216 V390 H0 Z" fill="#ebf6ee"/>
-                <path d="M0 300 L76 256 L150 286 L230 220 L308 274 L380 236 V390 H0 Z" fill="#d9edf8" opacity="0.8"/>
-              </svg>
-            </div>
-
-            <div class="card-content">
-              <div class="card-header">
-                <div class="header-left">
-                  <img src="https://i.ibb.co/yFqcv858/image-removebg-preview.png" alt="Герб Кыргызской Республики" class="kg-emblem">
-                  <div class="header-title-kg">
-                    <span>КЫРГЫЗ РЕСПУБЛИКАСЫ</span>
-                    <span>КЫРГЫЗСКАЯ РЕСПУБЛИКА</span>
-                    <span>THE KYRGYZ REPUBLIC</span>
-                  </div>
-                </div>
-                <div class="header-right">
-                  <div class="header-title-card">
-                    <span>ИДЕНТИФИКАЦИЯЛЫК КАРТА</span>
-                    <span>ИДЕНТИФИКАЦИОННАЯ КАРТА</span>
-                    <span>IDENTITY CARD</span>
-                  </div>
-                  <svg class="chip-icon" viewBox="0 0 32 20">
-                    <rect x="1" y="1" width="30" height="18" rx="3" fill="none" stroke="#165ba7" stroke-width="2"/>
-                    <line x1="1" y1="10" x2="31" y2="10" stroke="#165ba7" stroke-width="2"/>
-                    <circle cx="16" cy="10" r="4.5" fill="#ffffff" stroke="#165ba7" stroke-width="2"/>
-                  </svg>
-                </div>
-              </div>
-
-              <div class="back-list">
-                <div class="field">
-                  <span class="f-lbl">Берген мекеме / Орган выдачи / Authority</span>
-                  <span class="f-val">СӨМ 211011</span>
-                </div>
-                <div class="field">
-                  <span class="f-lbl">Берилген күнү / Дата выдачи<br>/ Date of issue</span>
-                  <span class="f-val">15.01.2025</span>
-                </div>
-                <div class="field">
-                  <span class="f-lbl">Жеке номуру / Персональный номер<br>/ Personal number</span>
-                  <span class="f-val">12512200350169</span>
-                </div>
-                <div class="field">
-                  <span class="f-lbl">Документтин № / № Документа<br>/ Document №</span>
-                  <span class="f-val">ID4317155</span>
-                </div>
-                <div class="field">
-                  <span class="f-lbl">Колдонуу мөөнөтү / Срок действия<br>/ Date of expiry</span>
-                  <span class="f-val">15.01.2035</span>
-                </div>
-                <div class="field">
-                  <span class="f-lbl">Катталган жери/ Адрес прописки / Address</span>
-                  <span class="f-val">Кыргызская Республика,Чуйская обл.,Сокулукский р-н,Манасский а/а,с. Комсомольское, улица Веселая, дом 23</span>
-                </div>
-              </div>
-            </div>
-
-            <span class="card-num">2</span>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <div class="indicators" id="dots" role="tablist"></div>
-  </main>
-
-  <section class="sheet" id="sheet">
-    <div class="notch-pedestal" id="notch" role="button" aria-label="Показать QR-код">
-      <div class="orb-btn">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-          <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="#ffffff" stroke-width="2"/>
-          <rect x="5" y="5" width="3" height="3" fill="#ffffff"/>
-          <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="#ffffff" stroke-width="2"/>
-          <rect x="16" y="5" width="3" height="3" fill="#ffffff"/>
-          <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="#ffffff" stroke-width="2"/>
-          <rect x="5" y="16" width="3" height="3" fill="#ffffff"/>
-          <path d="M14 14H16V16H14V14Z" fill="#ffffff"/>
-          <path d="M19 14H21V19H19V14Z" fill="#ffffff"/>
-          <path d="M14 19H17V21H14V19Z" fill="#ffffff"/>
-          <circle cx="12" cy="12" r="1.5" fill="#ffffff"/>
+  
+  <div class="main-content">
+    <header>
+      <button class="btn-back" id="back" aria-label="Назад">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 19l-7-7 7-7"/>
         </svg>
+      </button>
+      <h1>Идентификационная карта</h1>
+    </header>
+
+    <main class="stage">
+      <!-- Стопка карточек -->
+      <div class="card-stack" id="stack">
+
+        <!-- Карточка 1: Лицевая -->
+        <div class="id-card" id="card-0" style="z-index: 10; transform: translate3d(0, 0, 0) scale(1);">
+          <div class="card-art">
+            <svg viewBox="0 0 380 390" preserveAspectRatio="none">
+              <path d="M0 245 L62 186 L118 224 L175 160 L248 226 L320 174 L380 216 V390 H0 Z" fill="#ebf6ee"/>
+              <path d="M0 300 L76 256 L150 286 L230 220 L308 274 L380 236 V390 H0 Z" fill="#d9edf8" opacity="0.8"/>
+              <path d="M190 390 L274 316 L315 342 L380 292 V390 Z" fill="#eaf4fe" opacity="0.95"/>
+            </svg>
+          </div>
+
+          <div class="card-content">
+            <div class="card-header">
+              <div class="header-left">
+                <img src="https://i.ibb.co/yFqcv858/image-removebg-preview.png" alt="Герб Кыргызской Республики" class="kg-emblem">
+                <div class="header-title-kg">
+                  <span>КЫРГЫЗ РЕСПУБЛИКАСЫ</span>
+                  <span>КЫРГЫЗСКАЯ РЕСПУБЛИКА</span>
+                  <span>THE KYRGYZ REPUBLIC</span>
+                </div>
+              </div>
+
+              <div class="header-right">
+                <div class="header-title-card">
+                  <span>ИДЕНТИФИКАЦИЯЛЫК КАРТА</span>
+                  <span>ИДЕНТИФИКАЦИОННАЯ КАРТА</span>
+                  <span>IDENTITY CARD</span>
+                </div>
+                <svg class="chip-icon" viewBox="0 0 32 20">
+                  <rect x="1" y="1" width="30" height="18" rx="3" fill="none" stroke="#165ba7" stroke-width="2"/>
+                  <line x1="1" y1="10" x2="31" y2="10" stroke="#165ba7" stroke-width="2"/>
+                  <circle cx="16" cy="10" r="4.5" fill="#ffffff" stroke="#165ba7" stroke-width="2"/>
+                </svg>
+              </div>
+            </div>
+
+            <div class="card-grid">
+              <div class="col-photo">
+                <div class="photo-frame">
+                  <img src="https://i.ibb.co/1J6t3Y2y/azem-photo11.png" alt="Фото">
+                </div>
+
+                <div class="sig-block">
+                  <span class="sig-lbl">Колу / Подпись<br>/ Signature</span>
+                  <img src="https://i.ibb.co/FksT0HVV/azem-sig11-removebg-preview.png" alt="Подпись" class="sig-img">
+                </div>
+              </div>
+
+              <div class="col-info">
+                <div class="field">
+                  <span class="f-lbl">Аты / Имя / Name</span>
+                  <span class="f-val">АЗЕМ / AZEM</span>
+                </div>
+                <div class="field">
+                  <span class="f-lbl">Фамилиясы / Фамилия / Surname</span>
+                  <span class="f-val">ТАШМАТОВА / TASHMATOVA</span>
+                </div>
+                <div class="field">
+                  <span class="f-lbl">Атасынын аты / Отчество / Patronymic</span>
+                  <span class="f-val">ТУНУКБЕКОВНА</span>
+                </div>
+                <div class="field">
+                  <span class="f-lbl">Жынысы / Пол / Sex</span>
+                  <span class="f-val">А / F</span>
+                </div>
+                <div class="field">
+                  <span class="f-lbl">Жарандыгы / Гражданство / Citizenship</span>
+                  <span class="f-val">Кыргыз Республикасы</span>
+                </div>
+                <div class="field">
+                  <span class="f-lbl">Улуту / Национальность / Nationality</span>
+                  <span class="f-val">КЫРГЫЗ</span>
+                </div>
+                <div class="field">
+                  <span class="f-lbl">Туулган күнү / Дата рождения<br>/ Date of birth</span>
+                  <span class="f-val">25.12.2003</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <span class="card-num">1</span>
+        </div>
+
+        <!-- Карточка 2: Оборотная -->
+        <div class="id-card" id="card-1" style="z-index: 5; transform: translate3d(0, 14px, 0) scale(0.93);">
+          <div class="card-art">
+            <svg viewBox="0 0 380 390" preserveAspectRatio="none">
+              <path d="M0 245 L62 186 L118 224 L175 160 L248 226 L320 174 L380 216 V390 H0 Z" fill="#ebf6ee"/>
+              <path d="M0 300 L76 256 L150 286 L230 220 L308 274 L380 236 V390 H0 Z" fill="#d9edf8" opacity="0.8"/>
+            </svg>
+          </div>
+
+          <div class="card-content">
+            <div class="card-header">
+              <div class="header-left">
+                <img src="https://i.ibb.co/yFqcv858/image-removebg-preview.png" alt="Герб Кыргызской Республики" class="kg-emblem">
+                <div class="header-title-kg">
+                  <span>КЫРГЫЗ РЕСПУБЛИКАСЫ</span>
+                  <span>КЫРГЫЗСКАЯ РЕСПУБЛИКА</span>
+                  <span>THE KYRGYZ REPUBLIC</span>
+                </div>
+              </div>
+              <div class="header-right">
+                <div class="header-title-card">
+                  <span>ИДЕНТИФИКАЦИЯЛЫК КАРТА</span>
+                  <span>ИДЕНТИФИКАЦИОННАЯ КАРТА</span>
+                  <span>IDENTITY CARD</span>
+                </div>
+                <svg class="chip-icon" viewBox="0 0 32 20">
+                  <rect x="1" y="1" width="30" height="18" rx="3" fill="none" stroke="#165ba7" stroke-width="2"/>
+                  <line x1="1" y1="10" x2="31" y2="10" stroke="#165ba7" stroke-width="2"/>
+                  <circle cx="16" cy="10" r="4.5" fill="#ffffff" stroke="#165ba7" stroke-width="2"/>
+                </svg>
+              </div>
+            </div>
+
+            <div class="back-list">
+              <div class="field">
+                <span class="f-lbl">Берген мекеме / Орган выдачи / Authority</span>
+                <span class="f-val">СӨМ 211011</span>
+              </div>
+              <div class="field">
+                <span class="f-lbl">Берилген күнү / Дата выдачи<br>/ Date of issue</span>
+                <span class="f-val">15.01.2025</span>
+              </div>
+              <div class="field">
+                <span class="f-lbl">Жеке номуру / Персональный номер<br>/ Personal number</span>
+                <span class="f-val">12512200350169</span>
+              </div>
+              <div class="field">
+                <span class="f-lbl">Документтин № / № Документа<br>/ Document №</span>
+                <span class="f-val">ID4317155</span>
+              </div>
+              <div class="field">
+                <span class="f-lbl">Колдонуу мөөнөтү / Срок действия<br>/ Date of expiry</span>
+                <span class="f-val">15.01.2035</span>
+              </div>
+              <div class="field">
+                <span class="f-lbl">Катталган жери/ Адрес прописки / Address</span>
+                <span class="f-val">Кыргызская Республика,Чуйская обл.,Сокулукский р-н,Манасский а/а,с. Комсомольское, улица Веселая, дом 23</span>
+              </div>
+            </div>
+          </div>
+
+          <span class="card-num">2</span>
+        </div>
+
+      </div>
+
+      <!-- Индикаторы страниц -->
+      <div class="indicators" id="dots" role="tablist">
+        <button class="dot" data-i="0" aria-current="true" aria-label="Карточка 1"></button>
+        <button class="dot" data-i="1" aria-label="Карточка 2"></button>
+      </div>
+    </main>
+
+    <!-- Нижняя панель с кнопкой QR -->
+    <div class="bottom-dock" id="open-sheet-btn">
+      <div class="notch-center">
+        <div class="qr-orb">
+          <!-- Иконка QR с глобусом -->
+          <img src="https://i.ibb.co/SwmSH6Mt/1231231.jpg" alt="QR" class="qr-orb-icon">
+        </div>
+      </div>
+      <div class="dock-text">Потяните для просмотра QR кода</div>
+    </div>
+  </div>
+
+  <!-- Полупрозрачный фон -->
+  <div class="backdrop" id="backdrop"></div>
+
+  <!-- Всплывающее окно (Bottom Sheet) -->
+  <div class="modal-sheet" id="modal-sheet">
+    <div class="sheet-handle-wrap" id="close-sheet-handle">
+      <div class="sheet-handle"></div>
+    </div>
+
+    <div class="qr-card-box">
+      <!-- Контейнер с крупным QR-кодом -->
+      <div class="qr-code-wrap">
+        <img src="https://i.ibb.co/jk0GbKF6/test123-Photoroom.png" alt="QR-код цифрового документа" class="qr-code-img">
+      </div>
+
+      <!-- Шкала прогресса таймера -->
+      <div class="timer-bar-wrap">
+        <div class="timer-bar-fill" id="timer-bar"></div>
+      </div>
+
+      <!-- Текст таймера с динамическим отсчетом -->
+      <div class="timer-text-wrap">
+        <div class="timer-sub">До истечения действия временного QR-кода осталось</div>
+        <div class="timer-bold" id="timer-countdown">2 мин 33 секунд</div>
       </div>
     </div>
 
-    <div class="peek-title" id="peek">QR-кодду көрүү үчүн жогору тартыңыз</div>
+    <!-- Текстовая информация под карточкой -->
+    <div class="doc-info-block">
+      <div class="doc-info-title">QR-код цифрового документа</div>
+      <div class="doc-info-desc">Чтобы поделиться данными необходимо сообщить следующую информацию:</div>
 
-    <div class="sheet-body">
-      <div class="qr-box" id="qrbig"></div>
-      <p>Поднесите к сканеру</p>
+      <div class="doc-creds">
+        <div class="cred-col">
+          <span class="cred-label">ПИН:</span>
+          <span class="cred-value">12512200350169</span>
+        </div>
+        <div class="cred-col">
+          <span class="cred-label">Временный пароль</span>
+          <span class="cred-value">063746</span>
+        </div>
+      </div>
     </div>
-  </section>
+  </div>
+
 </div>
 
 <script>
 (function(){
-  var COUNT = 2;
-  var track = document.getElementById('track');
-  var dotsEl = document.getElementById('dots');
-  var carousel = document.getElementById('carousel');
+  /* 1. Логика свайпа стопки карточек */
+  var stack = document.getElementById('stack');
+  var card0 = document.getElementById('card-0');
+  var card1 = document.getElementById('card-1');
+  var cards = [card0, card1];
+  var dots = document.querySelectorAll('.dot');
+  
+  var active = 0;
+  var isDragging = false, isAnimating = false;
+  var startX = 0, dx = 0;
+  var stackWidth = stack.clientWidth || 360;
 
-  for (var k = 0; k < COUNT; k++) {
-    var d = document.createElement('button');
-    d.className = 'dot';
-    d.setAttribute('aria-label', 'Страница ' + (k + 1));
-    d.dataset.i = k;
-    dotsEl.appendChild(d);
-  }
-  var dots = dotsEl.querySelectorAll('.dot');
-
-  var i = 0, dx = 0, w = carousel.clientWidth, startX = null, startY = 0, startT = 0, locked = null;
-  var EASE = 'transform .45s cubic-bezier(.22,1,.36,1)';
-
-  function render(animate) {
-    var t = animate ? EASE : 'none';
-    track.style.transition = t;
-    track.style.transform = 'translate3d(' + (-i * w + dx) + 'px,0,0)';
-    for (var m = 0; m < dots.length; m++) {
-      if (m === i) dots[m].setAttribute('aria-current', 'true');
-      else dots[m].removeAttribute('aria-current');
-    }
+  function updateDots() {
+    dots.forEach(function(dot, idx) {
+      if (idx === active) {
+        dot.setAttribute('aria-current', 'true');
+      } else {
+        dot.removeAttribute('aria-current');
+      }
+    });
   }
 
-  function go(n) {
-    i = Math.max(0, Math.min(COUNT - 1, n));
+  function performDeckSwap(dir) {
+    if (isAnimating) return;
+    isAnimating = true;
+
+    var front = cards[active];
+    var back = cards[1 - active];
+    stackWidth = stack.clientWidth || 360;
+    var appEl = document.getElementById('app');
+    var appWidth = appEl ? appEl.clientWidth : window.innerWidth;
+    var sideMargin = Math.max(0, (appWidth - stackWidth) / 2);
+
+    var flyX = dir * (stackWidth + sideMargin - 12);
+
+    front.style.transition = 'transform 0.35s cubic-bezier(0.2, 0.85, 0.3, 1)';
+    front.style.transform = 'translate3d(' + flyX + 'px, 0, 0) scale(1)';
+
+    back.style.transition = 'none';
+    back.style.transform = 'translate3d(0, 14px, 0) scale(0.93)';
+
+    setTimeout(function() {
+      front.style.zIndex = '5';
+      back.style.zIndex = '10';
+
+      back.style.transition = 'transform 0.44s cubic-bezier(0.18, 1.25, 0.35, 1)';
+      back.style.transform = 'translate3d(0, 0, 0) scale(1)';
+
+      front.style.transition = 'transform 0.44s cubic-bezier(0.18, 1.25, 0.35, 1)';
+      front.style.transform = 'translate3d(0, 14px, 0) scale(0.93)';
+
+      active = 1 - active;
+      updateDots();
+
+      setTimeout(function() {
+        isAnimating = false;
+      }, 460);
+    }, 320);
+  }
+
+  stack.addEventListener('pointerdown', function(e) {
+    if (isAnimating) return;
+    isDragging = true;
+    startX = e.clientX;
     dx = 0;
-    render(true);
-  }
+    stackWidth = stack.clientWidth || 360;
 
-  carousel.addEventListener('pointerdown', function(e){
-    startX = e.clientX; startY = e.clientY; startT = performance.now(); locked = null;
+    cards[0].style.transition = 'none';
+    cards[1].style.transition = 'none';
+    stack.classList.add('drag');
+    try { stack.setPointerCapture(e.pointerId); } catch(_) {}
   });
 
-  window.addEventListener('pointermove', function(e){
-    if (startX === null) return;
-    var mx = e.clientX - startX, my = e.clientY - startY;
-    if (locked === null && (Math.abs(mx) > 6 || Math.abs(my) > 6)) {
-      locked = Math.abs(mx) > Math.abs(my);
-      if (locked) {
-        carousel.classList.add('drag');
-        try { carousel.setPointerCapture(e.pointerId); } catch(_){}
+  window.addEventListener('pointermove', function(e) {
+    if (!isDragging || isAnimating) return;
+    dx = e.clientX - startX;
+    var front = cards[active];
+    var back = cards[1 - active];
+    front.style.transform = 'translate3d(' + dx + 'px, 0, 0) scale(1)';
+    back.style.transform = 'translate3d(0, 14px, 0) scale(0.93)';
+  });
+
+  function pointerEnd() {
+    if (!isDragging) return;
+    isDragging = false;
+    stack.classList.remove('drag');
+
+    if (Math.abs(dx) >= 45) {
+      performDeckSwap(dx > 0 ? 1 : -1);
+    } else {
+      var front = cards[active];
+      var back = cards[1 - active];
+      front.style.transition = 'transform 0.3s cubic-bezier(0.18, 1.2, 0.35, 1)';
+      front.style.transform = 'translate3d(0, 0, 0) scale(1)';
+      back.style.transition = 'transform 0.3s cubic-bezier(0.18, 1.2, 0.35, 1)';
+      back.style.transform = 'translate3d(0, 14px, 0) scale(0.93)';
+    }
+    dx = 0;
+  }
+
+  window.addEventListener('pointerup', pointerEnd);
+  window.addEventListener('pointercancel', pointerEnd);
+
+  dots.forEach(function(d) {
+    d.addEventListener('click', function() {
+      var target = parseInt(d.dataset.i, 10);
+      if (target !== active) {
+        performDeckSwap(target === 1 ? -1 : 1);
       }
-    }
-    if (!locked) return;
-    if ((i === 0 && mx > 0) || (i === COUNT - 1 && mx < 0)) mx *= 0.3;
-    dx = mx;
-    render(false);
+    });
   });
 
-  function end() {
-    if (startX === null) return;
-    var was = locked, v = dx / Math.max(performance.now() - startT, 1);
-    startX = null;
-    carousel.classList.remove('drag');
-    if (!was) return;
-    var next = i;
-    if (dx < -w * 0.22 || v < -0.45) next = i + 1;
-    else if (dx > w * 0.22 || v > 0.45) next = i - 1;
-    go(next);
+  document.getElementById('back').addEventListener('click', function() {
+    if (active !== 0) performDeckSwap(1);
+  });
+
+  /* 2. Логика модального окна QR-кода */
+  var app = document.getElementById('app');
+  var openBtn = document.getElementById('open-sheet-btn');
+  var modalSheet = document.getElementById('modal-sheet');
+  var backdrop = document.getElementById('backdrop');
+  var closeHandle = document.getElementById('close-sheet-handle');
+  var timerCountdown = document.getElementById('timer-countdown');
+  var timerBar = document.getElementById('timer-bar');
+
+  var timeLeft = 153;
+  var totalTime = 180;
+  var timerInterval = null;
+
+  function updateTimerUI() {
+    var m = Math.floor(timeLeft / 60);
+    var s = timeLeft % 60;
+    timerCountdown.textContent = m + ' мин ' + (s < 10 ? '0' : '') + s + ' секунд';
+    var pct = Math.max(0, Math.min(100, (timeLeft / totalTime) * 100));
+    timerBar.style.width = pct + '%';
   }
 
-  window.addEventListener('pointerup', end);
-  window.addEventListener('pointercancel', end);
-
-  dotsEl.addEventListener('click', function(e){
-    var b = e.target.closest('.dot');
-    if (b) go(+b.dataset.i);
-  });
-
-  document.getElementById('back').addEventListener('click', function(){
-    go(0);
-  });
-
-  window.addEventListener('resize', function(){
-    w = carousel.clientWidth;
-    render(false);
-    sizeSheet();
-  });
-
-  function generateQR(n, color) {
-    var seed = 42, str = '';
-    function r() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
-    function finder(x, y) {
-      str += '<path fill-rule="evenodd" d="M' + x + ' ' + y + 'h7v7h-7zM' + (x + 1) + ' ' + (y + 1) + 'v5h5v-5z"/>' +
-             '<rect x="' + (x + 2) + '" y="' + (y + 2) + '" width="3" height="3" rx="0.5"/>';
-    }
-    finder(0, 0); finder(n - 7, 0); finder(0, n - 7);
-    for (var y = 0; y < n; y++) {
-      for (var x = 0; x < n; x++) {
-        if ((x < 8 && y < 8) || (x >= n - 8 && y < 8) || (x < 8 && y >= n - 8)) continue;
-        if (r() > 0.53) str += '<rect x="' + x + '" y="' + y + '" width="1" height="1" rx="0.2"/>';
+  function startTimer() {
+    clearInterval(timerInterval);
+    updateTimerUI();
+    timerInterval = setInterval(function() {
+      if (timeLeft > 0) {
+        timeLeft--;
+        updateTimerUI();
+      } else {
+        timeLeft = 180;
+        updateTimerUI();
       }
-    }
-    return '<svg viewBox="0 0 ' + n + ' ' + n + '" fill="' + color + '">' + str + '</svg>';
+    }, 1000);
   }
 
-  document.getElementById('qrbig').innerHTML = generateQR(29, '#1565c0');
-
-  var sheet = document.getElementById('sheet');
-  var peek = document.getElementById('peek');
-  var notch = document.getElementById('notch');
-  var open = false, sy = null, sdy = 0, sT = 0, moved = false, closedY = 0;
-
-  function sizeSheet() {
-    closedY = sheet.offsetHeight - peek.offsetHeight - 42;
-    setSheet(open, false);
+  function openSheet() {
+    modalSheet.style.transition = 'transform 0.38s cubic-bezier(0.2, 1, 0.32, 1)';
+    modalSheet.style.transform = 'translateY(0)';
+    backdrop.classList.add('active');
+    app.classList.add('sheet-open');
+    startTimer();
   }
 
-  function setSheet(o, animate) {
-    open = o;
-    sheet.classList.toggle('open', o);
-    sheet.style.transition = animate === false ? 'none' : 'transform .45s cubic-bezier(.22,1,.36,1)';
-    sheet.style.setProperty('--y', (o ? 0 : closedY) + 'px');
-    peek.textContent = o ? 'Жабуу үчүн ылдый тартыңыз' : 'QR-кодду көрүү үчүн жогору тартыңыз';
+  function closeSheet() {
+    modalSheet.style.transition = 'transform 0.32s cubic-bezier(0.25, 1, 0.5, 1)';
+    modalSheet.style.transform = 'translateY(100%)';
+    backdrop.classList.remove('active');
+    app.classList.remove('sheet-open');
+    clearInterval(timerInterval);
+    sheetTouchY = null;
+    sheetDeltaY = 0;
   }
 
-  sheet.addEventListener('pointerdown', function(e){
-    sy = e.clientY; sdy = 0; sT = performance.now(); moved = false;
-    sheet.style.transition = 'none';
-    try { sheet.setPointerCapture(e.pointerId); } catch(_){}
+  openBtn.addEventListener('click', openSheet);
+  backdrop.addEventListener('click', closeSheet);
+  closeHandle.addEventListener('click', closeSheet);
+
+  window.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeSheet();
   });
 
-  sheet.addEventListener('pointermove', function(e){
-    if (sy === null) return;
-    sdy = e.clientY - sy;
-    if (Math.abs(sdy) > 4) moved = true;
-    var y = Math.max(0, Math.min(closedY, (open ? 0 : closedY) + sdy));
-    sheet.style.setProperty('--y', y + 'px');
+  // Плавный свайп вниз для закрытия шторки
+  var sheetTouchY = null, sheetDeltaY = 0;
+  modalSheet.addEventListener('pointerdown', function(e) {
+    sheetTouchY = e.clientY;
+    sheetDeltaY = 0;
+    modalSheet.style.transition = 'none';
+    try { modalSheet.setPointerCapture(e.pointerId); } catch(_) {}
   });
 
-  function sEnd() {
-    if (sy === null) return;
-    var v = sdy / Math.max(performance.now() - sT, 1);
-    sy = null;
-    if (!moved) {
-      setSheet(!open);
-      return;
+  window.addEventListener('pointermove', function(e) {
+    if (sheetTouchY === null) return;
+    var dy = e.clientY - sheetTouchY;
+    if (dy > 0) {
+      sheetDeltaY = dy;
+      modalSheet.style.transform = 'translateY(' + dy + 'px)';
     }
-    if (open) setSheet(!(sdy > closedY * 0.25 || v > 0.45));
-    else setSheet(sdy < -closedY * 0.25 || v < -0.45);
+  });
+
+  function sheetPointerEnd() {
+    if (sheetTouchY === null) return;
+    sheetTouchY = null;
+    if (sheetDeltaY > 60) {
+      closeSheet();
+    } else {
+      modalSheet.style.transition = 'transform 0.3s cubic-bezier(0.2, 1, 0.32, 1)';
+      modalSheet.style.transform = 'translateY(0)';
+    }
+    sheetDeltaY = 0;
   }
 
-  sheet.addEventListener('pointerup', sEnd);
-  sheet.addEventListener('pointercancel', sEnd);
-  notch.addEventListener('click', function(){ setSheet(!open); });
-
-  render(false);
-  sizeSheet();
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(sizeSheet);
-  }
+  window.addEventListener('pointerup', sheetPointerEnd);
+  window.addEventListener('pointercancel', sheetPointerEnd);
 })();
 </script>
 </body>
