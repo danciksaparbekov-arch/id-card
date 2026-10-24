@@ -827,7 +827,7 @@ header h1 {
 
 <script>
 (function(){
-  /* 1. Логика свайпа стопки карточек */
+/* 1. Логика свайпа стопки карточек (по горизонтали и вертикали) */
   var stack = document.getElementById('stack');
   var card0 = document.getElementById('card-0');
   var card1 = document.getElementById('card-1');
@@ -836,7 +836,7 @@ header h1 {
   
   var active = 0;
   var isDragging = false, isAnimating = false;
-  var startX = 0, dx = 0;
+  var startX = 0, startY = 0, dx = 0, dy = 0;
   var stackWidth = stack.clientWidth || 360;
 
   function updateDots() {
@@ -849,25 +849,37 @@ header h1 {
     });
   }
 
-  function performDeckSwap(dir) {
+  // Анимация смены карточки в 4 направлениях (x: влево/вправо, y: вверх/вниз)
+  function performDeckSwap(axis, dir) {
     if (isAnimating) return;
     isAnimating = true;
 
     var front = cards[active];
     var back = cards[1 - active];
     stackWidth = stack.clientWidth || 360;
+    var stackHeight = stack.clientHeight || 380;
     var appEl = document.getElementById('app');
     var appWidth = appEl ? appEl.clientWidth : window.innerWidth;
     var sideMargin = Math.max(0, (appWidth - stackWidth) / 2);
 
-    var flyX = dir * (stackWidth + sideMargin - 12);
+    var flyX = 0;
+    var flyY = 0;
 
+    if (axis === 'x') {
+      flyX = dir * (stackWidth + sideMargin - 12);
+    } else {
+      // Смещение по вертикали (оставляет контур ~20px у верхнего/нижнего края)
+      flyY = dir * (stackHeight - 20);
+    }
+
+    // ФАЗА 1: Текущая карточка улетает к выбранному краю
     front.style.transition = 'transform 0.35s cubic-bezier(0.2, 0.85, 0.3, 1)';
-    front.style.transform = 'translate3d(' + flyX + 'px, 0, 0) scale(1)';
+    front.style.transform = 'translate3d(' + flyX + 'px, ' + flyY + 'px, 0) scale(1)';
 
     back.style.transition = 'none';
     back.style.transform = 'translate3d(0, 14px, 0) scale(0.93)';
 
+    // ФАЗА 2: Смена слоев — вторая карточка вырастает, а улетевшая заезжает под неё
     setTimeout(function() {
       front.style.zIndex = '5';
       back.style.zIndex = '10';
@@ -891,7 +903,9 @@ header h1 {
     if (isAnimating) return;
     isDragging = true;
     startX = e.clientX;
+    startY = e.clientY;
     dx = 0;
+    dy = 0;
     stackWidth = stack.clientWidth || 360;
 
     cards[0].style.transition = 'none';
@@ -903,9 +917,12 @@ header h1 {
   window.addEventListener('pointermove', function(e) {
     if (!isDragging || isAnimating) return;
     dx = e.clientX - startX;
+    dy = e.clientY - startY;
     var front = cards[active];
     var back = cards[1 - active];
-    front.style.transform = 'translate3d(' + dx + 'px, 0, 0) scale(1)';
+
+    // Карточка следует за пальцем в любом направлении (2D)
+    front.style.transform = 'translate3d(' + dx + 'px, ' + dy + 'px, 0) scale(1)';
     back.style.transform = 'translate3d(0, 14px, 0) scale(0.93)';
   });
 
@@ -914,9 +931,20 @@ header h1 {
     isDragging = false;
     stack.classList.remove('drag');
 
-    if (Math.abs(dx) >= 45) {
-      performDeckSwap(dx > 0 ? 1 : -1);
+    var absX = Math.abs(dx);
+    var absY = Math.abs(dy);
+    var threshold = 40; // Порог свайпа в пикселях
+
+    if (absX >= threshold || absY >= threshold) {
+      if (absX >= absY) {
+        // Горизонтальный свайп: влево (-1) или вправо (+1)
+        performDeckSwap('x', dx > 0 ? 1 : -1);
+      } else {
+        // Вертикальный свайп: вверх (-1) или вниз (+1)
+        performDeckSwap('y', dy > 0 ? 1 : -1);
+      }
     } else {
+      // Возврат на место при слабом сдвиге
       var front = cards[active];
       var back = cards[1 - active];
       front.style.transition = 'transform 0.3s cubic-bezier(0.18, 1.2, 0.35, 1)';
@@ -925,6 +953,7 @@ header h1 {
       back.style.transform = 'translate3d(0, 14px, 0) scale(0.93)';
     }
     dx = 0;
+    dy = 0;
   }
 
   window.addEventListener('pointerup', pointerEnd);
@@ -934,35 +963,14 @@ header h1 {
     d.addEventListener('click', function() {
       var target = parseInt(d.dataset.i, 10);
       if (target !== active) {
-        performDeckSwap(target === 1 ? -1 : 1);
+        performDeckSwap('x', target === 1 ? -1 : 1);
       }
     });
   });
 
   document.getElementById('back').addEventListener('click', function() {
-    if (active !== 0) performDeckSwap(1);
+    if (active !== 0) performDeckSwap('x', 1);
   });
-
-  /* 2. Логика модального окна QR-кода */
-  var app = document.getElementById('app');
-  var openBtn = document.getElementById('open-sheet-btn');
-  var modalSheet = document.getElementById('modal-sheet');
-  var backdrop = document.getElementById('backdrop');
-  var closeHandle = document.getElementById('close-sheet-handle');
-  var timerCountdown = document.getElementById('timer-countdown');
-  var timerBar = document.getElementById('timer-bar');
-
-  var timeLeft = 153;
-  var totalTime = 180;
-  var timerInterval = null;
-
-  function updateTimerUI() {
-    var m = Math.floor(timeLeft / 60);
-    var s = timeLeft % 60;
-    timerCountdown.textContent = m + ' мин ' + (s < 10 ? '0' : '') + s + ' секунд';
-    var pct = Math.max(0, Math.min(100, (timeLeft / totalTime) * 100));
-    timerBar.style.width = pct + '%';
-  }
 
   function startTimer() {
     clearInterval(timerInterval);
