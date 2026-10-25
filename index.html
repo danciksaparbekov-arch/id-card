@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<title>Tunduk</title>
+<title>Паспорт</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Паспорт">
@@ -11,21 +11,18 @@
 <meta name="theme-color" content="#cde4fc">
 <link rel="manifest" href='data:application/manifest+json,{"name":"Паспорт","short_name":"Паспорт","start_url":".","display":"standalone","background_color":"#dcedfd","theme_color":"#cde4fc"}'>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
   --sky-top: #cde4fc;
   --sky-mid: #dcedfd;
   --sky-bot: #eaf4fe;
-  --text-dark: #0f2744;
   --card-bg: #ffffff;
-  --lbl-color: #5d7186;
-  --val-color: #0b1a2d;
-  --primary-blue: #145ca7;
-  --teal-active: #00c1af;
-  --sheet-bg: #f5f7fa;
+  --lbl-color: #4b5563;
+  --val-color: #0d1726;
+  --header-blue: #155799;
+  --teal-active: #00bead;
+  --teal-inactive: #42d1c3;
+  --sheet-bg: #ffffff;
   --qr-blue: #1462c9;
   --shadow-card: 0 16px 36px -10px rgba(20, 68, 138, 0.16), 0 3px 8px rgba(0, 0, 0, 0.03);
   box-sizing: border-box;
@@ -43,9 +40,10 @@ html, body {
   height: 100%;
   overflow: hidden;
   background: var(--sky-mid);
-  color: var(--text-dark);
-  font-family: "Manrope", system-ui, -apple-system, sans-serif;
+  color: var(--val-color);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
 }
 
 img {
@@ -82,22 +80,23 @@ img {
 header {
   display: flex;
   align-items: center;
-  padding: 16px 16px 6px;
-  gap: 12px;
+  padding: 14px 16px 6px;
+  gap: 8px;
   z-index: 2;
 }
 
 .btn-back {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   border: 0;
   background: none;
   display: grid;
   place-items: center;
-  color: var(--text-dark);
+  color: #111827;
   cursor: pointer;
   border-radius: 50%;
   padding: 0;
+  margin-left: -6px;
 }
 
 .btn-back:active {
@@ -105,10 +104,13 @@ header {
 }
 
 header h1 {
-  font-size: 21px;
+  flex: 1;
+  text-align: center;
+  margin-right: 32px;
+  font-size: 19px;
   font-weight: 600;
-  letter-spacing: -0.2px;
-  color: var(--text-dark);
+  letter-spacing: -0.3px;
+  color: #111827;
 }
 
 /* Область стопки карточек */
@@ -118,7 +120,7 @@ header h1 {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding-bottom: 110px;
+  padding-bottom: 105px;
   min-height: 0;
   position: relative;
   overflow: hidden;
@@ -127,8 +129,8 @@ header h1 {
 .card-stack {
   position: relative;
   width: calc(100% - 44px);
-  max-width: 382px;
-  aspect-ratio: 376 / 384;
+  max-width: 380px;
+  aspect-ratio: 376 / 394;
   touch-action: none;
   cursor: grab;
   margin: 0 auto;
@@ -143,28 +145,19 @@ header h1 {
   inset: 0;
   width: 100%;
   height: 100%;
-  background: var(--card-bg);
+  background-color: var(--card-bg);
+  background-image: url('https://i.ibb.co/35tz2yvr/Minimal-Pastel-Mountain-Card-Background-1.png');
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
   border-radius: 26px;
   box-shadow: var(--shadow-card);
-  padding: 14px 16px 14px 14px;
+  padding: 16px 18px 16px 16px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   will-change: transform, z-index;
   transform-origin: center center;
-}
-
-.card-art {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.card-art svg {
-  width: 100%;
-  height: 100%;
-  display: block;
 }
 
 .card-content {
@@ -175,26 +168,28 @@ header h1 {
   flex-direction: column;
 }
 
+/* Шапка внутри карточки */
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  padding-right: 2px;
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
 }
 
 .kg-emblem {
-  width: 30px;
-  height: 30px;
+  width: 31px;
+  height: 31px;
   flex-shrink: 0;
   object-fit: contain;
   display: block;
-  transform: scale(1.18);
+  transform: scale(1.15);
 }
 
 .header-title-kg {
@@ -208,8 +203,8 @@ header h1 {
   font-size: 6.8px;
   font-weight: 700;
   line-height: 1.15;
-  color: var(--primary-blue);
-  letter-spacing: 0.1px;
+  color: var(--header-blue);
+  letter-spacing: 0.15px;
 }
 
 .header-right {
@@ -226,16 +221,17 @@ header h1 {
 }
 
 .chip-icon {
-  width: 26px;
+  width: 25px;
   height: 16px;
   flex-shrink: 0;
 }
 
+/* Сетка лицевой стороны карточки */
 .card-grid {
   flex: 1;
   display: grid;
-  grid-template-columns: 108px 1fr;
-  column-gap: 12px;
+  grid-template-columns: 106px 1fr;
+  column-gap: 14px;
   align-items: start;
 }
 
@@ -248,10 +244,10 @@ header h1 {
 .photo-frame {
   position: relative;
   width: 100%;
-  aspect-ratio: 108 / 138;
-  border-radius: 18px;
+  aspect-ratio: 106 / 136;
+  border-radius: 17px;
   overflow: hidden;
-  background: #eef3f7;
+  background: #f1f4f8;
   box-shadow: inset 0 0 0 1px rgba(16, 42, 74, 0.08);
 }
 
@@ -263,50 +259,52 @@ header h1 {
 }
 
 .sig-block {
-  margin-top: 6px;
+  margin-top: 8px;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding-left: 2px;
+  padding-left: 1px;
 }
 
 .sig-lbl {
-  font-size: 8px;
-  line-height: 1.15;
+  font-size: 8.5px;
+  line-height: 1.2;
   color: var(--lbl-color);
   font-weight: 500;
 }
 
 .sig-img {
-  width: 95px;
-  height: 40px;
+  width: 96px;
+  height: 42px;
   object-fit: contain;
   margin-top: -2px;
+  margin-left: -2px;
 }
 
 .col-info {
   display: flex;
   flex-direction: column;
-  gap: 4.5px;
+  gap: 5.5px;
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 0.5px;
+  gap: 1px;
 }
 
 .f-lbl {
-  font-size: 8px;
-  line-height: 1.15;
+  font-size: 8.5px;
+  line-height: 1.18;
   color: var(--lbl-color);
   font-weight: 500;
+  letter-spacing: -0.05px;
 }
 
 .f-val {
-  font-size: 11px;
-  line-height: 1.22;
+  font-size: 11.8px;
+  line-height: 1.25;
   font-weight: 700;
   color: var(--val-color);
   letter-spacing: -0.15px;
@@ -314,29 +312,47 @@ header h1 {
 
 .card-num {
   position: absolute;
-  right: 14px;
-  bottom: 8px;
+  right: 18px;
+  bottom: 12px;
   font-size: 20px;
   font-weight: 800;
-  color: #102136;
+  color: #101d2c;
   z-index: 3;
 }
 
+/* Оборотная сторона карточки */
 .back-list {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  margin-top: 2px;
+  gap: 6px;
+  margin-top: 4px;
   padding-right: 28px;
+  padding-left: 2px;
 }
 
 .back-list .field {
-  gap: 1px;
+  gap: 1.5px;
+}
+
+.back-list .f-lbl {
+  font-size: 8.5px;
+  line-height: 1.2;
 }
 
 .back-list .f-val {
-  font-size: 10.8px;
-  line-height: 1.25;
+  font-size: 11.5px;
+  line-height: 1.28;
+  letter-spacing: -0.1px;
+}
+
+.card-back-num {
+  position: absolute;
+  right: 18px;
+  bottom: 38px;
+  font-size: 20px;
+  font-weight: 800;
+  color: #101d2c;
+  z-index: 3;
 }
 
 /* Индикаторы страниц */
@@ -344,24 +360,25 @@ header h1 {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   margin-top: 24px;
 }
 
 .dot {
   border: 0;
   padding: 0;
-  height: 9px;
-  width: 9px;
-  border-radius: 5px;
-  background: var(--teal-active);
+  height: 8px;
+  width: 8px;
+  border-radius: 4px;
+  background: var(--teal-inactive);
   cursor: pointer;
-  opacity: 0.8;
-  transition: width 0.38s cubic-bezier(0.18, 1.25, 0.35, 1), opacity 0.3s ease;
+  opacity: 0.9;
+  transition: width 0.38s cubic-bezier(0.18, 1.25, 0.35, 1), background 0.3s ease;
 }
 
 .dot[aria-current="true"] {
-  width: 32px;
+  width: 28px;
+  background: var(--teal-active);
   opacity: 1;
 }
 
@@ -420,10 +437,10 @@ header h1 {
 }
 
 .dock-text {
-  font-size: 15px;
+  font-size: 14.5px;
   font-weight: 500;
   color: #111827;
-  letter-spacing: -0.1px;
+  letter-spacing: -0.15px;
 }
 
 /* Затемняющий оверлей */
@@ -586,85 +603,15 @@ header h1 {
           <path d="M15 19l-7-7 7-7"/>
         </svg>
       </button>
-      <h1>Идентификационная карта</h1>
+      <h1>Паспорт</h1>
     </header>
 
     <main class="stage">
       <!-- Стопка карточек -->
       <div class="card-stack" id="stack">
 
-        <!-- Карточка 1: Лицевая -->
+        <!-- Карточка 1: Лицевая сторона -->
         <div class="id-card" id="card-0" style="z-index: 10; transform: translate3d(0, 0, 0) scale(1);">
-          <!-- Реалистичный векторный фон государственной ID-карты Кыргызской Республики -->
-          <div class="card-art">
-            <svg viewBox="0 0 380 390" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <!-- Тёплое сияние солнца -->
-                <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stop-color="#fff1b8" stop-opacity="0.95"/>
-                  <stop offset="55%" stop-color="#fff8db" stop-opacity="0.6"/>
-                  <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
-                </radialGradient>
-                <!-- Левый пастельный холм за фотографией -->
-                <linearGradient id="hillLeft" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#edf9ef"/>
-                  <stop offset="65%" stop-color="#daf2de"/>
-                  <stop offset="100%" stop-color="#e8f7ec"/>
-                </linearGradient>
-                <!-- Правый склон холма -->
-                <linearGradient id="hillRight" x1="0%" y1="0%" x2="100%" y2="80%">
-                  <stop offset="0%" stop-color="#f0faf2"/>
-                  <stop offset="100%" stop-color="#d3eed8"/>
-                </linearGradient>
-              </defs>
-
-              <!-- 1. Восходящее солнце с лучами (между фото и именами) -->
-              <g opacity="0.95">
-                <!-- Лучи солнца -->
-                <path d="M172 144 L160 102 L174 106 Z" fill="#ffe785" opacity="0.65"/>
-                <path d="M172 144 L182 105 L196 114 Z" fill="#ffe785" opacity="0.65"/>
-                <path d="M172 144 L204 122 L212 136 Z" fill="#ffe785" opacity="0.6"/>
-                <path d="M172 144 L144 120 L152 110 Z" fill="#ffe785" opacity="0.55"/>
-                <circle cx="172" cy="144" r="30" fill="url(#sunGlow)"/>
-              </g>
-
-              <!-- 2. Парящий сокол (Ак-Шумкар) в небе справа -->
-              <g fill="#cfdfef" opacity="0.9" transform="translate(56, -16)">
-                <!-- Тело и голова -->
-                <path d="M175 112 C184 108 194 110 204 118 C194 121 184 121 175 118 Z"/>
-                <!-- Левое крыло -->
-                <path d="M175 115 C156 122 138 132 122 145 C132 137 145 130 160 125 C167 123 172 119 175 115 Z"/>
-                <!-- Правое вытянутое крыло -->
-                <path d="M194 114 C214 107 236 102 260 99 C248 108 233 115 216 120 C207 121 200 118 194 114 Z"/>
-                <!-- Хвост -->
-                <path d="M172 118 L158 128 L168 123 Z"/>
-              </g>
-
-              <!-- 3. Зеленый холм слева (плавно поднимается за фотографией) -->
-              <path d="M0 320 L0 150 Q38 85 80 80 Q120 120 145 175 Q170 225 195 238 L195 330 Z" 
-                    fill="url(#hillLeft)" opacity="0.92"/>
-
-              <!-- 4. Правые зеленые холмы за именами -->
-              <path d="M140 215 Q205 165 260 190 Q315 215 380 168 V350 H140 Z" fill="#f1faf3" opacity="0.8"/>
-              <path d="M155 225 Q218 175 275 212 Q325 245 380 200 V350 H155 Z" fill="url(#hillRight)" opacity="0.88"/>
-
-              <!-- 5. Голубая река/ледник (заливает нижнюю правую часть под цифрой 1) -->
-              <path d="M0 242 Q60 236 115 260 Q200 302 295 245 Q335 252 380 242 V390 H0 Z" fill="#deeffa"/>
-              <path d="M0 268 Q72 250 132 282 Q215 324 300 268 Q340 274 380 265 V390 H0 Z" fill="#cde5f7" opacity="0.75"/>
-
-              <!-- 6. Белые зубцы крыла, врезающиеся в голубой угол под датой рождения -->
-              <path d="M0 242 
-                       Q60 236 115 260 Q155 282 185 274 
-                       L212 300 L238 314
-                       L266 332 L254 336
-                       L294 356 L278 362
-                       L322 384 L306 388
-                       L350 404 L336 406
-                       L0 406 Z" 
-                    fill="#ffffff"/>
-            </svg>
-          </div>
-
           <div class="card-content">
             <div class="card-header">
               <div class="header-left">
@@ -729,7 +676,7 @@ header h1 {
                 </div>
                 <div class="field">
                   <span class="f-lbl">Туулган күнү / Дата рождения<br>/ Date of birth</span>
-                  <span class="f-val">25.12.2006</span>
+                  <span class="f-val">25.12.2003</span>
                 </div>
               </div>
             </div>
@@ -738,78 +685,8 @@ header h1 {
           <span class="card-num">1</span>
         </div>
 
-        <!-- Карточка 2: Оборотная -->
+        <!-- Карточка 2: Оборотная сторона -->
         <div class="id-card" id="card-1" style="z-index: 5; transform: translate3d(0, 14px, 0) scale(0.93);">
-          <!-- Векторный фон оборотной стороны -->
-          <div class="card-art">
-            <svg viewBox="0 0 380 390" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <!-- Тёплое сияние солнца -->
-                <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stop-color="#fff1b8" stop-opacity="0.95"/>
-                  <stop offset="55%" stop-color="#fff8db" stop-opacity="0.6"/>
-                  <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
-                </radialGradient>
-                <!-- Левый пастельный холм за фотографией -->
-                <linearGradient id="hillLeft" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#edf9ef"/>
-                  <stop offset="65%" stop-color="#daf2de"/>
-                  <stop offset="100%" stop-color="#e8f7ec"/>
-                </linearGradient>
-                <!-- Правый склон холма -->
-                <linearGradient id="hillRight" x1="0%" y1="0%" x2="100%" y2="80%">
-                  <stop offset="0%" stop-color="#f0faf2"/>
-                  <stop offset="100%" stop-color="#d3eed8"/>
-                </linearGradient>
-              </defs>
-
-              <!-- 1. Восходящее солнце с лучами (между фото и именами) -->
-              <g opacity="0.95">
-                <!-- Лучи солнца -->
-                <path d="M172 144 L160 102 L174 106 Z" fill="#ffe785" opacity="0.65"/>
-                <path d="M172 144 L182 105 L196 114 Z" fill="#ffe785" opacity="0.65"/>
-                <path d="M172 144 L204 122 L212 136 Z" fill="#ffe785" opacity="0.6"/>
-                <path d="M172 144 L144 120 L152 110 Z" fill="#ffe785" opacity="0.55"/>
-                <circle cx="172" cy="144" r="30" fill="url(#sunGlow)"/>
-              </g>
-
-              <!-- 2. Парящий сокол (Ак-Шумкар) в небе справа -->
-              <g fill="#cfdfef" opacity="0.9" transform="translate(56, -16)">
-                <!-- Тело и голова -->
-                <path d="M175 112 C184 108 194 110 204 118 C194 121 184 121 175 118 Z"/>
-                <!-- Левое крыло -->
-                <path d="M175 115 C156 122 138 132 122 145 C132 137 145 130 160 125 C167 123 172 119 175 115 Z"/>
-                <!-- Правое вытянутое крыло -->
-                <path d="M194 114 C214 107 236 102 260 99 C248 108 233 115 216 120 C207 121 200 118 194 114 Z"/>
-                <!-- Хвост -->
-                <path d="M172 118 L158 128 L168 123 Z"/>
-              </g>
-
-              <!-- 3. Зеленый холм слева (плавно поднимается за фотографией) -->
-              <path d="M0 320 L0 150 Q38 85 80 80 Q120 120 145 175 Q170 225 195 238 L195 330 Z" 
-                    fill="url(#hillLeft)" opacity="0.92"/>
-
-              <!-- 4. Правые зеленые холмы за именами -->
-              <path d="M140 215 Q205 165 260 190 Q315 215 380 168 V350 H140 Z" fill="#f1faf3" opacity="0.8"/>
-              <path d="M155 225 Q218 175 275 212 Q325 245 380 200 V350 H155 Z" fill="url(#hillRight)" opacity="0.88"/>
-
-              <!-- 5. Голубая река/ледник (заливает нижнюю правую часть под цифрой 1) -->
-              <path d="M0 242 Q60 236 115 260 Q200 302 295 245 Q335 252 380 242 V390 H0 Z" fill="#deeffa"/>
-              <path d="M0 268 Q72 250 132 282 Q215 324 300 268 Q340 274 380 265 V390 H0 Z" fill="#cde5f7" opacity="0.75"/>
-
-              <!-- 6. Белые зубцы крыла, врезающиеся в голубой угол под датой рождения -->
-              <path d="M0 242 
-                       Q60 236 115 260 Q155 282 185 274 
-                       L212 300 L238 314
-                       L266 332 L254 336
-                       L294 356 L278 362
-                       L322 384 L306 388
-                       L350 404 L336 406
-                       L0 406 Z" 
-                    fill="#ffffff"/>
-            </svg>
-          </div>
-
           <div class="card-content">
             <div class="card-header">
               <div class="header-left">
@@ -862,7 +739,7 @@ header h1 {
             </div>
           </div>
 
-          <span class="card-num">2</span>
+          <span class="card-back-num">2</span>
         </div>
 
       </div>
@@ -882,7 +759,7 @@ header h1 {
           <img src="https://i.ibb.co/SwmSH6Mt/1231231.jpg" alt="QR" class="qr-orb-icon">
         </div>
       </div>
-      <div class="dock-text">Потяните для просмотра QR кода</div>
+      <div class="dock-text">QR-кодду көрүү үчүн жогору тартыңыз</div>
     </div>
   </div>
 
@@ -975,14 +852,12 @@ header h1 {
       flyY = dir * (stackHeight - 20);
     }
 
-    // ФАЗА 1: Текущая карточка улетает к выбранному краю
     front.style.transition = 'transform 0.35s cubic-bezier(0.2, 0.85, 0.3, 1)';
     front.style.transform = 'translate3d(' + flyX + 'px, ' + flyY + 'px, 0) scale(1)';
 
     back.style.transition = 'none';
     back.style.transform = 'translate3d(0, 14px, 0) scale(0.93)';
 
-    // ФАЗА 2: Смена слоев — вторая карточка вырастает, а улетевшая заезжает под неё
     setTimeout(function() {
       front.style.zIndex = '5';
       back.style.zIndex = '10';
@@ -1079,7 +954,7 @@ header h1 {
   var timerCountdown = document.getElementById('timer-countdown');
   var timerBar = document.getElementById('timer-bar');
 
-  var timeLeft = 153; // 2 мин 33 сек = 153 сек
+  var timeLeft = 153;
   var totalTime = 180;
   var timerInterval = null;
 
